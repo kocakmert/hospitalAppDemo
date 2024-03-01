@@ -10,8 +10,7 @@ import lombok.Setter;
 @Setter
 public class PatientEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "SEQ_PATIENT")
-    @SequenceGenerator(name = "SEQ_PATIENT" , sequenceName = "SEQ_PATIENT" , allocationSize = 1 )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PATIENT_ID")
     private Long patientId;
     @Column(name = "PATIENT_FIRST_NAME")
