@@ -1,6 +1,7 @@
 package hospitalApp.demo.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +11,8 @@ import lombok.Setter;
 @Setter
 public class PatientEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "seq_patient")
+    @SequenceGenerator(name = "seq_patient" , sequenceName = "seq_patient" , allocationSize = 1 )
     @Column(name = "PATIENT_ID")
     private Long patientId;
     @Column(name = "PATIENT_FIRST_NAME")
@@ -27,6 +29,7 @@ public class PatientEntity {
     private String patientAdress;
     @Column(name = "PATIENT_COMPLAINT")
     private String patientComplaint;
-    @Column(name = "HOSPITAL_ID")
-    private Long hospitalId;
+    @ManyToOne()
+    @JoinColumn(name = "hospital_Id")
+    private HospitalEntity hospital;
 }
