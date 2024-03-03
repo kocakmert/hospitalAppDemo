@@ -9,13 +9,12 @@ import hospitalApp.demo.web.request.RequestDeletePatient;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-
 
 @RestController
 @AllArgsConstructor(onConstructor =  @__(@Autowired))
 @RequestMapping("/patient")
+@CrossOrigin
 public class PatientController {
 
     private IPatientService service;

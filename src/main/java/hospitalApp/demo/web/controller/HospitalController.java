@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor(onConstructor =  @__(@Autowired))
 @RequestMapping("/hospital")
+@CrossOrigin
 public class HospitalController {
     private IHospitalService hospitalService;
 
