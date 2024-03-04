@@ -1,17 +1,14 @@
 package hospitalApp.demo.service.abstracts;
 
-import hospitalApp.demo.entities.HospitalEntity;
-import hospitalApp.demo.util.results.DataResult;
-import hospitalApp.demo.util.results.Result;
+import hospitalApp.demo.util.results.BaseResponse;
 import hospitalApp.demo.web.request.RequestAddHospital;
 import hospitalApp.demo.web.request.RequestDeleteHospital;
-
-import java.util.List;
+import hospitalApp.demo.web.response.ResponseHospital;
 
 public interface IHospitalService {
 
-    DataResult<List<HospitalEntity>> getAll();
-    Result addHospital(RequestAddHospital request );
+    ResponseHospital getAll();
+    BaseResponse addHospital(RequestAddHospital request );
 
-    Result deleteHospital(RequestDeleteHospital request);
+    BaseResponse deleteHospital(RequestDeleteHospital request);
 }

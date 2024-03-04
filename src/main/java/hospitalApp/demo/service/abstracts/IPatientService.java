@@ -1,19 +1,19 @@
 package hospitalApp.demo.service.abstracts;
 
 import hospitalApp.demo.entities.PatientEntity;
-import hospitalApp.demo.util.results.DataResult;
-import hospitalApp.demo.util.results.Result;
+import hospitalApp.demo.util.results.BaseResponse;
 import hospitalApp.demo.web.request.RequestAddPatient;
 import hospitalApp.demo.web.request.RequestDeletePatient;
-import java.util.List;
+import hospitalApp.demo.web.response.ResponsePatient;
 
 public interface IPatientService {
 
-    DataResult<List<PatientEntity>> getAll();
+    ResponsePatient getAll();
 
-    Result addPatient(RequestAddPatient request );
+    BaseResponse addPatient(RequestAddPatient request );
 
-    Result deletePatient(RequestDeletePatient request);
+    BaseResponse deletePatient(RequestDeletePatient request);
 
-    DataResult<List<PatientEntity>> getPatientByHospitalId(Long hospitalId);
+    ResponsePatient getPatientByHospitalId(Long hospitalId);
+
 }

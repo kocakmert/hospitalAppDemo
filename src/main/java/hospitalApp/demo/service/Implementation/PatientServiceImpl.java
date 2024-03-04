@@ -3,12 +3,10 @@ package hospitalApp.demo.service.Implementation;
 import hospitalApp.demo.entities.PatientEntity;
 import hospitalApp.demo.repository.PatientRepository;
 import hospitalApp.demo.service.abstracts.IPatientService;
-import hospitalApp.demo.util.results.DataResult;
-import hospitalApp.demo.util.results.Result;
-import hospitalApp.demo.util.results.SuccessDataResult;
-import hospitalApp.demo.util.results.SuccessResult;
+import hospitalApp.demo.util.results.*;
 import hospitalApp.demo.web.request.RequestAddPatient;
 import hospitalApp.demo.web.request.RequestDeletePatient;
+import hospitalApp.demo.web.response.ResponsePatient;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,38 +19,58 @@ public class PatientServiceImpl  implements IPatientService {
     private PatientRepository patientRepository;
 
     @Override
-    public DataResult<List<PatientEntity>> getAll() {
-        return new SuccessDataResult<>(patientRepository.findAll(), "Veri geldi");
+    public ResponsePatient getAll() {
+        ResponsePatient response = new ResponsePatient();
+        List<PatientEntity> patientList = patientRepository.findAll();
+        response.setPatientList(patientList);
+        return response;
     }
 
     @Override
-    public Result addPatient(RequestAddPatient request) {
-        String responseMessage = "";
+    public BaseResponse addPatient(RequestAddPatient request) {
+        BaseResponse response = new BaseResponse();
         PatientEntity newPatientEntity = request.getPatient();
-        if(newPatientEntity.getPatientId() != null){
-            Optional<PatientEntity> optionalPatient = patientRepository.findById(newPatientEntity.getPatientId());
-            if(optionalPatient.isPresent()){
+        try{
+            if(newPatientEntity.getPatientId() != null){
+                Optional<PatientEntity> optionalPatient = patientRepository.findById(newPatientEntity.getPatientId());
+                if(optionalPatient.isPresent()){
+                    patientRepository.save(newPatientEntity);
+                    response.setSuccess(true);
+                    response.setMessage("Güncelleme Başarılı");
+                }
+            }else{
                 patientRepository.save(newPatientEntity);
-                responseMessage = "Güncelleme Başarılı";
+                response.setSuccess(true);
+                response.setMessage("Kaydetme Başarılı");
             }
-        }else{
-            patientRepository.save(newPatientEntity);
-            responseMessage = "Kaydetme Başarılı";
+        }catch (Exception e){
+            response.setSuccess(false);
+            response.setMessage("Hata Alındı" + e.getMessage());
         }
-        return new SuccessResult(responseMessage);
+        return response;
     }
 
     @Override
-    public Result deletePatient(RequestDeletePatient request) {
-        Optional<PatientEntity> optionalPatient = patientRepository.findById(request.getPatientId());
-        if(optionalPatient.isPresent()){
-            patientRepository.deleteById(request.getPatientId());
+    public BaseResponse deletePatient(RequestDeletePatient request) {
+        BaseResponse response = new BaseResponse();
+        try {
+            Optional<PatientEntity> optionalPatient = patientRepository.findById(request.getPatientId());
+            if(optionalPatient.isPresent()){
+                patientRepository.deleteById(request.getPatientId());
+                response.setSuccess(true);
+                response.setMessage("Silme Başarılı");
+            }
+        }catch (Exception e){
+            response.setSuccess(true);
+            response.setMessage("Silme İşleminde Hata oluştu" + e.getMessage());
         }
-        return new SuccessResult("Silme Başarılı");
+        return  response;
     }
 
     @Override
-    public DataResult<List<PatientEntity>> getPatientByHospitalId(Long hospitalId) {
-        return new SuccessDataResult<>(patientRepository.getByHospital(hospitalId), "Veri geldi");
+    public ResponsePatient getPatientByHospitalId(Long hospitalId) {
+        ResponsePatient response = new ResponsePatient();
+        response.setPatientList(patientRepository.getByHospital(hospitalId));
+        return  response;
     }
 }

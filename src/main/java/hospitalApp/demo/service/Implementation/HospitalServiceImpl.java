@@ -2,20 +2,15 @@ package hospitalApp.demo.service.Implementation;
 
 import hospitalApp.demo.entities.HospitalEntity;
 import hospitalApp.demo.repository.HospitalRepository;
-import hospitalApp.demo.repository.PatientRepository;
 import hospitalApp.demo.service.abstracts.IHospitalService;
-import hospitalApp.demo.util.results.DataResult;
-import hospitalApp.demo.util.results.Result;
-import hospitalApp.demo.util.results.SuccessDataResult;
-import hospitalApp.demo.util.results.SuccessResult;
+import hospitalApp.demo.util.results.*;
 import hospitalApp.demo.web.request.RequestAddHospital;
 import hospitalApp.demo.web.request.RequestDeleteHospital;
+import hospitalApp.demo.web.response.ResponseHospital;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.List;
 import java.util.Optional;
-
 
 @Service
 @AllArgsConstructor(onConstructor =  @__(@Autowired))
@@ -24,33 +19,50 @@ public class HospitalServiceImpl implements IHospitalService {
     private HospitalRepository hospitalRepository;
 
     @Override
-    public DataResult<List<HospitalEntity>> getAll() {
-        return new SuccessDataResult<>(hospitalRepository.findAll(), "Veri geldi");
+    public ResponseHospital getAll() {
+        ResponseHospital response = new ResponseHospital();
+        response.setHospitalList(hospitalRepository.findAll());
+        return response;
     }
 
     @Override
-    public Result addHospital(RequestAddHospital request) {
-        String responseMessage = "";
-        HospitalEntity newHospitalEntity = request.getHospital();
-        if(newHospitalEntity.getHospitalId() != null){
-            Optional<HospitalEntity> optionalHospital = hospitalRepository.findById(newHospitalEntity.getHospitalId());
-            if(optionalHospital.isPresent()){
+    public BaseResponse addHospital(RequestAddHospital request) {
+        BaseResponse response = new BaseResponse();
+        try{
+            HospitalEntity newHospitalEntity = request.getHospital();
+            if(newHospitalEntity.getHospitalId() != null){
+                Optional<HospitalEntity> optionalHospital = hospitalRepository.findById(newHospitalEntity.getHospitalId());
+                if(optionalHospital.isPresent()){
+                    hospitalRepository.save(newHospitalEntity);
+                    response.setSuccess(true);
+                    response.setMessage("Güncelleme Başarılı");
+                }
+            }else{
                 hospitalRepository.save(newHospitalEntity);
-                responseMessage = "Güncelleme Başarılı";
+                response.setSuccess(true);
+                response.setMessage("Kaydetme Başarılı");
             }
-        }else{
-            hospitalRepository.save(newHospitalEntity);
-            responseMessage = "Kaydetme Başarılı";
+        }catch (Exception e){
+            response.setSuccess(false);
+            response.setMessage("Hata" + e.getMessage());
         }
-        return new SuccessResult(responseMessage);
+        return response;
     }
 
     @Override
-    public Result deleteHospital(RequestDeleteHospital request) {
-        Optional<HospitalEntity> optionalHospital = hospitalRepository.findById(request.getId());
-        if(optionalHospital.isPresent()){
-            hospitalRepository.deleteById(request.getId());
+    public BaseResponse deleteHospital(RequestDeleteHospital request) {
+        BaseResponse response = new BaseResponse();
+        try {
+            Optional<HospitalEntity> optionalHospital = hospitalRepository.findById(request.getId());
+            if(optionalHospital.isPresent()){
+                hospitalRepository.deleteById(request.getId());
+                response.setSuccess(true);
+                response.setMessage("Silme Başarılı");
+            }
+        }catch (Exception e){
+            response.setSuccess(false);
+            response.setMessage("Hata" + e.getMessage());
         }
-        return new SuccessResult("Silme Başarılı");
+        return response;
     }
 }
